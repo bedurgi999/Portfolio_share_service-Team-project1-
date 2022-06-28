@@ -1,0 +1,82 @@
+.loading span {
+  display: inline-block;
+  height: 50px;
+  line-height: 50px;
+  background-color: rgba(255, 205, 119, 0.15);
+  background-image: linear-gradient(30deg, rgba(254, 109, 115, 0.15) 12%, transparent 12.9%, transparent 87%, rgba(254, 109, 115, 0.15) 87.9%, rgba(254, 109, 115, 0.15)), linear-gradient(150deg, rgba(254, 109, 115, 0.15) 12%, transparent 12.9%, transparent 87%, rgba(254, 109, 115, 0.15) 87.9%, rgba(254, 109, 115, 0.15)), linear-gradient(30deg, rgba(254, 109, 115, 0.15) 12%, transparent 12.9%, transparent 87%, rgba(254, 109, 115, 0.15) 87.9%, rgba(254, 109, 115, 0.15)), linear-gradient(150deg, rgba(254, 109, 115, 0.15) 12%, transparent 12.9%, transparent 87%, rgba(254, 109, 115, 0.15) 87.9%, rgba(254, 109, 115, 0.15)), linear-gradient(60deg, rgba(65, 155, 224, 0.15) 25%, transparent 25.9%, transparent 75%, rgba(65, 155, 224, 0.15) 75%, rgba(65, 155, 224, 0.15)), linear-gradient(60deg, rgba(65, 155, 224, 0.15) 25%, transparent 25.9%, transparent 75%, rgba(65, 155, 224, 0.15) 75%, rgba(65, 155, 224, 0.15));
+  background-position: 0 0, 0 0, 25px 50px, 25px 50px, 0 0, 25px 50px;
+  background-size: 50px 100px;
+  padding:0 10px;
+  border-radius: 47px;
+  margin: 0 -0.075em;
+  animation: loading 0.7s infinite alternate;
+}
+
+
+.loading span:nth-child(2) {
+  animation-delay: .1s;
+}
+.loading span:nth-child(3) {
+  animation-delay: .2s;
+}
+.loading span:nth-child(4) {
+  animation-delay: .3s;
+}
+.loading span:nth-child(5) {
+  animation-delay: .4s;
+}
+.loading span:nth-child(6) {
+  animation-delay: .5s;
+}
+.loading span:nth-child(7) {
+  animation-delay: .6s;
+}
+@keyframes loading {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.8);
+  }}
+
+  .navi:hover {
+    font-weight: bold;
+    border-bottom: 2px solid;
+  }
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    justify-content: center;
+}
+.portfolioPage{
+    display: flex;
+    column-gap: 0%;
+    padding: 13px 5%;
+}
+.portfolioCard{
+    flex-basis: 25%;
+    position: sticky;
+    top: 70px;
+    align-self: flex-start;
+    padding: 20px;
+    border-radius: 4px;
+}
+.portfolioContent{
+    flex-basis: 50%;
+    position: sticky;
+    align-self: flex-start;
+    margin-left: 50px;
+}
+
+#banner_mypage {
+  height: 150px;
+  display:flex;
+  flex-direction:column;
+  text-align:center;
+  background-color: rgba(255, 205, 119, 0.15);
+  background-image: linear-gradient(30deg, rgba(254, 109, 115, 0.15) 12%, transparent 12.9%, transparent 87%, rgba(254, 109, 115, 0.15) 87.9%, rgba(254, 109, 115, 0.15)), linear-gradient(150deg, rgba(254, 109, 115, 0.15) 12%, transparent 12.9%, transparent 87%, rgba(254, 109, 115, 0.15) 87.9%, rgba(254, 109, 115, 0.15)), linear-gradient(30deg, rgba(254, 109, 115, 0.15) 12%, transparent 12.9%, transparent 87%, rgba(254, 109, 115, 0.15) 87.9%, rgba(254, 109, 115, 0.15)), linear-gradient(150deg, rgba(254, 109, 115, 0.15) 12%, transparent 12.9%, transparent 87%, rgba(254, 109, 115, 0.15) 87.9%, rgba(254, 109, 115, 0.15)), linear-gradient(60deg, rgba(65, 155, 224, 0.15) 25%, transparent 25.9%, transparent 75%, rgba(65, 155, 224, 0.15) 75%, rgba(65, 155, 224, 0.15)), linear-gradient(60deg, rgba(65, 155, 224, 0.15) 25%, transparent 25.9%, transparent 75%, rgba(65, 155, 224, 0.15) 75%, rgba(65, 155, 224, 0.15));
+  background-position: 0 0, 0 0, 25px 50px, 25px 50px, 0 0, 25px 50px;
+  background-size: 50px 100px;
+}

@@ -4,7 +4,8 @@ import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 
 class userAuthService {
-  static async addUser({ name, email, password }) {
+  // 유저 추가(회원 가입)
+  static async addUser({ name, email, password, job }) {
     // 이메일 중복 확인
     const user = await User.findByEmail({ email });
     if (user) {
@@ -18,7 +19,7 @@ class userAuthService {
 
     // id 는 유니크 값 부여
     const id = uuidv4();
-    const newUser = { id, name, email, password: hashedPassword };
+    const newUser = { id, name, email, password: hashedPassword, job };
 
     // db에 저장
     const createdNewUser = await User.create({ newUser });
@@ -27,6 +28,7 @@ class userAuthService {
     return createdNewUser;
   }
 
+  // 로그인
   static async getUser({ email, password }) {
     // 이메일 db에 존재 여부 확인
     const user = await User.findByEmail({ email });
@@ -56,6 +58,7 @@ class userAuthService {
     const id = user.id;
     const name = user.name;
     const description = user.description;
+    const job = user.job;
 
     const loginUser = {
       token,
@@ -63,55 +66,14 @@ class userAuthService {
       email,
       name,
       description,
+      job,
       errorMessage: null,
     };
 
     return loginUser;
   }
 
-  static async getUsers() {
-    const users = await User.findAll();
-    return users;
-  }
-
-  static async setUser({ user_id, toUpdate }) {
-    // 우선 해당 id 의 유저가 db에 존재하는지 여부 확인
-    let user = await User.findById({ user_id });
-
-    // db에서 찾지 못한 경우, 에러 메시지 반환
-    if (!user) {
-      const errorMessage = "가입 내역이 없습니다. 다시 한 번 확인해 주세요.";
-      return { errorMessage };
-    }
-
-    // 업데이트 대상에 name이 있다면, 즉 name 값이 null 이 아니라면 업데이트 진행
-    if (toUpdate.name) {
-      const fieldToUpdate = "name";
-      const newValue = toUpdate.name;
-      user = await User.update({ user_id, fieldToUpdate, newValue });
-    }
-
-    if (toUpdate.email) {
-      const fieldToUpdate = "email";
-      const newValue = toUpdate.email;
-      user = await User.update({ user_id, fieldToUpdate, newValue });
-    }
-
-    if (toUpdate.password) {
-      const fieldToUpdate = "password";
-      const newValue = toUpdate.password;
-      user = await User.update({ user_id, fieldToUpdate, newValue });
-    }
-
-    if (toUpdate.description) {
-      const fieldToUpdate = "description";
-      const newValue = toUpdate.description;
-      user = await User.update({ user_id, fieldToUpdate, newValue });
-    }
-
-    return user;
-  }
-
+  // 유저 조회
   static async getUserInfo({ user_id }) {
     const user = await User.findById({ user_id });
 
@@ -124,6 +86,71 @@ class userAuthService {
 
     return user;
   }
+
+  // 전체 유저 조회
+  static async getUsers() {
+    const users = await User.findAll();
+    return users;
+  }
+
+  // 유저 정보 수정
+  static async setUser({ user_id, toUpdate }) {
+    // 우선 해당 id 의 유저가 db에 존재하는지 여부 확인
+    let user = await User.findById({ user_id });
+
+    // db에서 찾지 못한 경우, 에러 메시지 반환
+    if (!user) {
+      const errorMessage = "가입 내역이 없습니다. 다시 한 번 확인해 주세요.";
+      return { errorMessage };
+    }
+    
+    // 변경 사항에 password 있을 시 암호화 해서 저장
+    if (toUpdate.password) {
+      toUpdate["password"] = await bcrypt.hash(toUpdate.password, 10);
+    }
+
+    // 수정해야하는 필드에 맞는 값을 업데이트
+    const toUpdateField = Object.keys(toUpdate);
+
+    toUpdateField.forEach(key => {
+      if (!toUpdate[key]) delete toUpdate[key];
+      if (key === "profile" && toUpdate[key] === "default") toUpdate[key] = null;
+    });
+
+    toUpdate.projectNum = toUpdate.projectNum ? toUpdate.projectNum : 0;
+
+    user = await User.update({ user_id, toUpdate });
+    return user;
+  }
+
+  // 유저 이메일과 임시 비밀번호로 유저 비밀번호 초기화
+  static async resetPassword({ email, tempPassword }) {
+    let user = await User.findByEmail({ email });
+
+    if (!user) {
+      const errorMessage =
+        "해당 이메일은 존재하지 않습니다. 다시 한 번 확인해 주세요.";
+      return { errorMessage };
+    }
+
+    const hashedPassword = await bcrypt.hash(tempPassword, 10); 
+    const toUpdate = { password: hashedPassword };
+    
+    user = await User.update({ 
+      user_id: user.id, 
+      toUpdate 
+    });
+    
+    return user;
+  }
+
+  // 유저 삭제 (회원 탈퇴)
+  static async deleteUser({ user_id }) {
+    // 해당 유저 삭제
+    const deletedUser = await User.delete({ user_id });
+    return deletedUser;
+  }
+
 }
 
 export { userAuthService };

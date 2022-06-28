@@ -48,7 +48,7 @@ educationRouter.get("/educationlist/:user_id", async (req, res, next) => {
     // URI 파라미터에서 user_id 가져오기
     const { user_id } = req.params;
     // userId의 education 데이터를 모두 가져옴
-    const education = await educationService.getEducation({ user_id });
+    const education = await educationService.getEducations({ user_id });
     
     res.status(200).json(education);
   } catch (error) {
@@ -85,7 +85,7 @@ educationRouter.put("/educations/:id", async (req, res, next) => {
 
       const toUpdate = { school, major, position };
 
-      const updatedEducation = await educationService.updateEducation({ education_id, toUpdate });
+      const updatedEducation = await educationService.setEducation({ education_id, toUpdate });
 
       if (updatedEducation.errorMessage) {
         throw new Error(updatedEducation.errorMessage);
@@ -108,12 +108,26 @@ educationRouter.delete("/educations/:id", async (req, res, next) => {
       throw new Error(deletedEducation.message);
     }
 
-    res.status(200).send('success');
+    res.status(204).send('success');
   } catch (error) {
     next(error);
   }
 }
 );
+
+// DELETE /educationlist/:user_id : user의 education 데이터 전체 삭제
+educationRouter.delete("/educationlist/:user_id", async (req, res, next) => {
+  try {
+    // URI 파라미터에서 user_id 가져오기
+    const { user_id } = req.params;
+    // userId의 education 데이터를 모두 삭제함
+    await educationService.deleteAllEducation({ user_id });
+
+    res.status(200).json('success');
+  } catch (error) {
+    next(error);
+  }
+});
 
 
 

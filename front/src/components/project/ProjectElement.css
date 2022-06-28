@@ -1,0 +1,9 @@
+#project-link {
+  display: -webkit-box;
+  word-wrap: break-word;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 50vh;
+}

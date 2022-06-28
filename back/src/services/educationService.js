@@ -23,43 +23,6 @@ class educationService {
     return createdNewEducation;
   }
 
-  // 학력 사항 수정
-  static async updateEducation({ education_id, toUpdate }) {
-    let education = await Education.findById({ education_id })
-
-    if (!education) {
-      const errorMessage = "해당 학력 정보가 존재하지 않습니다. 다시 시도해주세요.";
-      return { errorMessage };
-    }
-
-    // 각 필드별 수정 항목 반영
-    if (toUpdate.school) {
-      const fieldToUpdate = "school";
-      const newValue = toUpdate.school;
-      education = await Education.update({ education_id, fieldToUpdate, newValue });
-    }
-
-    if (toUpdate.major) {
-      const fieldToUpdate = "major";
-      const newValue = toUpdate.major;
-      education = await Education.update({ education_id, fieldToUpdate, newValue });
-    }
-
-    if (toUpdate.position) {
-      const fieldToUpdate = "position";
-      const newValue = toUpdate.position;
-      education = await Education.update({ education_id, fieldToUpdate, newValue });
-    }
-
-    return education;
-  }
-
-  // 해당 유저의 학력 사항 불러오기
-  static async getEducation({ user_id }) {
-    const education = await Education.findByUserId({ user_id });
-    return education;
-  }
-
   // 해당 학력 사항의 상세 정보 불러오기
   static async getEducationInfo({ education_id }) {
     const education = await Education.findById({ education_id });
@@ -71,6 +34,32 @@ class educationService {
     return education;
   }
 
+  // 해당 유저의 학력 사항 불러오기
+  static async getEducations({ user_id }) {
+    const education = await Education.findByUserId({ user_id });
+    return education;
+  }
+
+  // 학력 사항 수정
+  static async setEducation({ education_id, toUpdate }) {
+    let education = await Education.findById({ education_id })
+
+    if (!education) {
+      const errorMessage = "해당 학력 정보가 존재하지 않습니다. 다시 시도해주세요.";
+      return { errorMessage };
+    }
+    
+    // 수정해야하는 필드에 맞는 값을 업데이트
+    const toUpdateField = Object.keys(toUpdate);
+
+    toUpdateField.forEach(key => {
+      if (!toUpdate[key]) delete toUpdate[key];
+    });
+    
+    education = await Education.update({ education_id, toUpdate });
+    return education;
+  }
+  
   // 학력 사항 삭제
   static async deleteEducation({ education_id }) {
     const deletedEducation = await Education.delete({ education_id });
@@ -81,6 +70,13 @@ class educationService {
     // 삭제가 제대로 되지 않았을 경우
     const message = "삭제가 정상적으로 이루어지지 않았습니다.";
     return { message };
+  }
+
+  // 유저의 학력 사항 모두 삭제
+  static async deleteAllEducation({ user_id }) {
+    const deletedEducations = await Education.deleteAll({ user_id });
+    
+    return;
   }
 }
 

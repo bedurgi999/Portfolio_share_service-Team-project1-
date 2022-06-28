@@ -38,6 +38,12 @@ class Award {
     const deletedAward = await AwardModel.deleteOne({ id: award_id });
     return deletedAward;
   }
+
+  // user_id를 이용하여 data 삭제
+  static async deleteAll({ user_id }) {
+    const deletedAwards = await AwardModel.deleteMany({ user_id: user_id });
+    return deletedAwards;
+  }
 }
 
 export { Award };

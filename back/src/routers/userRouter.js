@@ -5,6 +5,7 @@ import { userAuthService } from "../services/userService";
 
 const userAuthRouter = Router();
 
+// POST /user/register : user 추가
 userAuthRouter.post("/user/register", async function (req, res, next) {
   try {
     if (is.emptyObject(req.body)) {
@@ -17,12 +18,14 @@ userAuthRouter.post("/user/register", async function (req, res, next) {
     const name = req.body.name;
     const email = req.body.email;
     const password = req.body.password;
+    const job = req.body.job;
 
     // 위 데이터를 유저 db에 추가하기
     const newUser = await userAuthService.addUser({
       name,
       email,
       password,
+      job,
     });
 
     if (newUser.errorMessage) {
@@ -35,6 +38,7 @@ userAuthRouter.post("/user/register", async function (req, res, next) {
   }
 });
 
+// POST /user/login : user 로그인
 userAuthRouter.post("/user/login", async function (req, res, next) {
   try {
     // req (request) 에서 데이터 가져오기
@@ -54,6 +58,7 @@ userAuthRouter.post("/user/login", async function (req, res, next) {
   }
 });
 
+// GET /userlist : 전체 user 조회
 userAuthRouter.get(
   "/userlist",
   login_required,
@@ -68,6 +73,7 @@ userAuthRouter.get(
   }
 );
 
+// GET /user/current : 현재 로그인 user 조회
 userAuthRouter.get(
   "/user/current",
   login_required,
@@ -90,6 +96,7 @@ userAuthRouter.get(
   }
 );
 
+// PUT /users/:id : user 정보 수정
 userAuthRouter.put(
   "/users/:id",
   login_required,
@@ -102,8 +109,29 @@ userAuthRouter.put(
       const email = req.body.email ?? null;
       const password = req.body.password ?? null;
       const description = req.body.description ?? null;
+      const job = req.body.job ?? null;
+      const profile = req.body.profile ?? null;
+      const github = req.body.github ?? null;
+      const gitlab = req.body.gitlab ?? null;
+      const twitter = req.body.twitter ?? null;
+      const instagram = req.body.instagram ?? null;
+      const youtube = req.body.youtube ?? null;
+      const projectNum = req.body.projectNum ?? null;
 
-      const toUpdate = { name, email, password, description };
+      const toUpdate = {
+        name,
+        email,
+        password,
+        job,
+        description,
+        github,
+        gitlab,
+        twitter,
+        instagram,
+        youtube,
+        profile,
+        projectNum
+      };
 
       // 해당 사용자 아이디로 사용자 정보를 db에서 찾아 업데이트함. 업데이트 요소가 없을 시 생략함
       const updatedUser = await userAuthService.setUser({ user_id, toUpdate });
@@ -119,6 +147,7 @@ userAuthRouter.put(
   }
 );
 
+// GET /users/:id : user 조회
 userAuthRouter.get(
   "/users/:id",
   login_required,
@@ -138,13 +167,25 @@ userAuthRouter.get(
   }
 );
 
-// jwt 토큰 기능 확인용, 삭제해도 되는 라우터임.
-userAuthRouter.get("/afterlogin", login_required, function (req, res, next) {
-  res
-    .status(200)
-    .send(
-      `안녕하세요 ${req.currentUserId}님, jwt 웹 토큰 기능 정상 작동 중입니다.`
-    );
-});
+// DELETE /users/:id : user 삭제 (회원 탈퇴)
+userAuthRouter.delete(
+  "/users/:id",
+  login_required,
+  async function (req, res, next) {
+    try {
+      const user_id = req.params.id;
+      const deletedUser = await userAuthService.deleteUser({ user_id });
+
+      if (deletedUser.deletedCount !== 1) {
+        throw new Error("정상적으로 삭제되지 않았습니다.");
+      } 
+  
+
+      res.status(200).send("success");
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export { userAuthRouter };

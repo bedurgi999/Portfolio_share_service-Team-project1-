@@ -4,6 +4,7 @@ import * as Api from '../../api';
 import CertificateList from './CertificateList';
 import CertificateForm from './CertificateForm';
 
+// 자격증 Card 구성
 const CertificateCard = ({ portfolioOwnerId, isEditable }) => {
 
     const [certificateList, setCertificateList] = useState([]);
@@ -13,13 +14,15 @@ const CertificateCard = ({ portfolioOwnerId, isEditable }) => {
             .then(res => setCertificateList(res.data));
     }, [portfolioOwnerId]);
 
-    return (<Card>
+    return (<Card style={{width:"740px"}}>
         <Card.Body>
-            <Card.Title>자격증</Card.Title>
+            <Card.Title><span className="material-icons" style={{verticalAlign:"middle",}}>badge</span> 자격증</Card.Title>
             <CertificateList certificateList={certificateList} setCertificateList={setCertificateList} isEditable={isEditable} portfolioOwnerId={portfolioOwnerId}></CertificateList>
             {isEditable && (
                 <div style={{ textAlign: "center" }}>
-                    {!isEditing && <Card.Body><Button size='sm' variant="primary" onClick={() => setIsEditing(true)}>+</Button></Card.Body>}
+                    {!isEditing && <Card.Body><Button style={{borderRadius:100,}} size='sm' variant="primary" onClick={() => setIsEditing(true)}>
+                        <span className="material-icons" style={{verticalAlign:'middle',fontSize:15,}}>add</span>
+                    </Button></Card.Body>}
                     {isEditing && <CertificateForm setIsEditing={setIsEditing} portfolioOwnerId={portfolioOwnerId} setCertificateList={setCertificateList}></CertificateForm>}
                 </div>
             )}

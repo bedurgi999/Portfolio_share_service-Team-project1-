@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Form, Button, Col, Row } from 'react-bootstrap';
 
 // 편집 버튼 클릭 시 나타나는 수정용 form
@@ -7,18 +7,20 @@ const EducationEdit = ({ item, onUpdate, editHandler }) => {
   const [schoolInput, setSchoolInput] = useState(school);
   const [majorInput, setMajorInput] = useState(major);
   const [checking, setChecking] = useState(position);
+  const [univ, setUniv] = useState([]);
 
+  useEffect(() => {
+    const univData = require('./univ.json');
+    setUniv(univData.dataSearch.content.map((u) => u.schoolName));
+
+  }, [])
   // 라디오 버튼 check 상태 변경 함수
   const checkHandler = (e) => {
     e.preventDefault();
     setChecking(e.target.value);
   };
 
-  // school value 값 수정 함수
-  const changeHandler1 = (e) => {
-    e.preventDefault();
-    setSchoolInput(e.target.value);
-  };
+
 
   // major value 값 수정 함수
   const changeHandler2 = (e) => {
@@ -44,15 +46,20 @@ const EducationEdit = ({ item, onUpdate, editHandler }) => {
 
   return (
     <Form style={{ margin: 10, padding: 10, }} onSubmit={submitHandler}>
-      <Form.Group className="mb-3">
-        <Form.Control
-          type="text"
-          name='school'
-          value={schoolInput}
-          onChange={changeHandler1}
-          placeholder='학교명'
-        />
-      </Form.Group>
+      <input 
+        className="form-control" 
+        list="datalistOptions"  
+        placeholder="학교 이름" 
+        name='school' 
+        style={{marginBottom:10}} 
+        value={schoolInput} 
+        onChange={(e) => {setSchoolInput(e.target.value)}}
+      ></input>
+      <datalist id="datalistOptions">
+        {univ.length > 0 && (
+          univ.map((u, idx) => <option key={idx} value={u}></option>)
+        )}
+      </datalist>
 
       <Form.Group className="mb-3">
         <Form.Control

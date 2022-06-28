@@ -20,10 +20,8 @@ class Education {
     return educations;
   }
   
-  // filter에 맞는 data의 변경할 필드(fieldToUpdate)에 변경할 내용(newValue)을 업데이트
-  static async update({ education_id, fieldToUpdate, newValue }) {
+  static async update({ education_id, toUpdate }) {
     const filter = { id: education_id };
-    const toUpdate = { [fieldToUpdate]: newValue };
     const option = { returnOriginal: false };
 
     const updatedEducation = await EducationModel.findOneAndUpdate(
@@ -38,6 +36,12 @@ class Education {
   static async delete({ education_id }) {
     const deletedEducation = await EducationModel.deleteOne({ id: education_id });
     return deletedEducation;
+  }
+
+  // user_id를 이용하여 data 삭제
+  static async deleteAll({ user_id }) {
+    const deletedEducations = await EducationModel.deleteMany({ user_id: user_id });
+    return deletedEducations;
   }
 }
 

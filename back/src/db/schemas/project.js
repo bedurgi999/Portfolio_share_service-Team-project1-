@@ -20,6 +20,10 @@ const ProjectSchema = new Schema(
       required: false,
       default: "설명이 아직 없습니다. 추가해 주세요.",
     },
+    link: {
+      type: String,
+      required: false,
+    },
     from_date: {
       type: String,
       required: true,
@@ -31,8 +35,24 @@ const ProjectSchema = new Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
   }
 );
+
+ProjectSchema.virtual('user', {
+  ref: 'User',
+  localField: 'user_id',
+  foreignField: 'id',
+  justOne: true,
+});
+
+ProjectSchema.virtual('likes', {
+  ref: 'Like',
+  localField: 'id',
+  foreignField: 'project_id',
+  count: true,
+});
 
 const ProjectModel = model("Project", ProjectSchema);
 

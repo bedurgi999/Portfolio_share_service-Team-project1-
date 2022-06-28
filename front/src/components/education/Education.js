@@ -68,9 +68,9 @@ const Education = ({ portfolioOwnerId, isEditable }) => {
   // 로그인 유저는 자신의 페이지만 추가/편집/삭제 가능
   // "+" 버튼 클릭 시 버튼 숨김 처리 및 추가폼 show  
   return (
-    <Card>
+    <Card style={{width:"740px"}}>
       <Card.Body>
-        <Card.Title>학력</Card.Title>
+        <Card.Title><span className="material-icons" style={{verticalAlign:"middle",}}>school</span> 학력</Card.Title>
         <EducationCardList 
           topics={topics} 
           editHandler={editHandler} 
@@ -83,9 +83,11 @@ const Education = ({ portfolioOwnerId, isEditable }) => {
             onCreate={createHandler} 
             clickHandler={clickHandler} 
           /> :
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ textAlign: 'center', padding:"16px" }}>
             {isEditable ? 
-            <Button size='sm' onClick={clickHandler}>+</Button> : <></>}
+            <Button style={{borderRadius:100,}} size='sm' onClick={clickHandler}>
+              <span className="material-icons" style={{verticalAlign:'middle',fontSize:15,}}>add</span>
+            </Button> : <></>}
           </div>}
       </Card.Body>
     </Card>

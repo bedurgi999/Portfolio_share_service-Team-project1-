@@ -1,16 +1,18 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Container, Col, Row } from "react-bootstrap";
+import { Container, Nav, Navbar } from "react-bootstrap";
 
 import { UserStateContext } from "../App";
 import * as Api from "../api";
+
+import "./Portfolio.css";
 import User from "./user/User";
 import Awards from "./award/Awards";
-
-import Project from './project/Project';
+import Project from "./project/Project";
 import Certificate from "./certificate/Certificate";
-
-import Education from './education/Education';
+import Education from "./education/Education";
+import Proceeding from "./proceeding/Proceeding";
+import Career from "./career/Career";
 
 function Portfolio() {
   const navigate = useNavigate();
@@ -21,6 +23,13 @@ function Portfolio() {
   // 아래 코드를 보면, isFetchCompleted가 false이면 "loading..."만 반환되어서, 화면에 이 로딩 문구만 뜨게 됨.
   const [isFetchCompleted, setIsFetchCompleted] = useState(false);
   const userState = useContext(UserStateContext);
+
+  const [isEducation, setIsEducation] = useState(true);
+  const [isAward, setIsAward] = useState(true);
+  const [isProject, setIsProject] = useState(true);
+  const [isCertificate, setIsCertificate] = useState(true);
+  const [isProceeding, setIsProceeding] = useState(true);
+  const [isCareer, setIsCareer] = useState(true);
 
   const fetchPorfolioOwner = async (ownerId) => {
     // 유저 id를 가지고 "/users/유저id" 엔드포인트로 요청해 사용자 정보를 불러옴.
@@ -36,7 +45,8 @@ function Portfolio() {
   useEffect(() => {
     // 전역 상태의 user가 null이라면 로그인이 안 된 상태이므로, 로그인 페이지로 돌림.
     if (!userState.user) {
-      navigate("/login", { replace: true });
+      // navigate("/login", { replace: true });
+      navigate("/home", { replace: true });
       return;
     }
 
@@ -54,39 +64,239 @@ function Portfolio() {
   }, [params, userState, navigate]);
 
   if (!isFetchCompleted) {
-    return "loading...";
+    return (
+      <div
+        className="loading"
+        style={{
+          fontWeight: "bold",
+          fontSize: 40,
+          textAlign: "center",
+          height: "100vh",
+          lineHeight: "100vh",
+        }}
+      >
+        <span>L</span>
+        <span>O</span>
+        <span>A</span>
+        <span>D</span>
+        <span>I</span>
+        <span>N</span>
+        <span>G</span>
+      </div>
+    );
   }
 
   return (
-    <Container fluid>
-      <Row className="justify-content-md-center">
-        <Col lg={3} style={{margin: "0 15px 0 0"}}>
+    <>
+      <div style={{ height: 110 }}></div>
+      <div id="banner_mypage">
+        <h2 style={{ fontWeight: "bolder" }}>My page</h2>
+        <h4>나만의 페이지를 작성해보세요</h4>
+      </div>
+      <div className="portfolioPage">
+        <div className="portfolioCard">
           <User
             portfolioOwnerId={portfolioOwner.id}
             isEditable={portfolioOwner.id === userState.user?.id}
+            style={{ marginTop: "20px" }}
           />
-        </Col>
-        <Col style={{margin: "0 15px 0 15px"}}>
-          <Education portfolioOwnerId={portfolioOwner.id}
-            isEditable={portfolioOwner.id === userState.user?.id}
-          />
-          <br/>
-          <Awards
-            portfolioOwnerId={portfolioOwner.id}
-            isEditable={portfolioOwner.id === userState.user?.id}
-          />
-          <br/>
-          <Project portfolioOwnerId={portfolioOwner.id}
-            isEditable={portfolioOwner.id === userState.user?.id} 
-          />
-          <br/>
-          <Certificate portfolioOwnerId={portfolioOwner.id}
-            isEditable={portfolioOwner.id === userState.user?.id} 
-          />
-          <br/>
-        </Col>
-      </Row>
-    </Container>
+        </div>
+        <div className="portfolioContent">
+          <Navbar>
+            <Container style={{ padding: 0 }}>
+              <Nav className="me-auto">
+                <Nav.Link
+                  className="navi"
+                  href="#all"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsProceeding(true);
+                    setIsEducation(true);
+                    setIsCareer(true);
+                    setIsAward(true);
+                    setIsProject(true);
+                    setIsCertificate(true);
+                  }}
+                >
+                  <span
+                    className="material-icons"
+                    style={{ verticalAlign: "middle" }}
+                  >
+                    all_inbox
+                  </span>{" "}
+                  전체 보기
+                </Nav.Link>
+                <Nav.Link
+                  className="navi"
+                  href="#proceeding"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsProceeding(true);
+                    setIsEducation(false);
+                    setIsCareer(false);
+                    setIsAward(false);
+                    setIsProject(false);
+                    setIsCertificate(false);
+                  }}
+                >
+                  진행중인 프로젝트
+                </Nav.Link>
+                <Nav.Link
+                  className="navi"
+                  href="#education"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsProceeding(false);
+                    setIsEducation(true);
+                    setIsAward(false);
+                    setIsProject(false);
+                    setIsCertificate(false);
+                    setIsCareer(false);
+                  }}
+                >
+                  학력
+                </Nav.Link>
+                <Nav.Link
+                  className="navi"
+                  href="#career"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsProceeding(false);
+                    setIsEducation(false);
+                    setIsCareer(true);
+                    setIsAward(false);
+                    setIsProject(false);
+                    setIsCertificate(false);
+                  }}
+                >
+                  경력
+                </Nav.Link>
+                <Nav.Link
+                  className="navi"
+                  href="#award"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsProceeding(false);
+                    setIsEducation(false);
+                    setIsAward(true);
+                    setIsProject(false);
+                    setIsCertificate(false);
+                    setIsCareer(false);
+                  }}
+                >
+                  수상 내역
+                </Nav.Link>
+                <Nav.Link
+                  className="navi"
+                  href="#project"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsProceeding(false);
+                    setIsEducation(false);
+                    setIsAward(false);
+                    setIsProject(true);
+                    setIsCareer(false);
+                    setIsCertificate(false);
+                  }}
+                >
+                  프로젝트
+                </Nav.Link>
+                <Nav.Link
+                  className="navi"
+                  href="#certificate"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsProceeding(false);
+                    setIsEducation(false);
+                    setIsAward(false);
+                    setIsProject(false);
+                    setIsCareer(false);
+                    setIsCertificate(true);
+                  }}
+                >
+                  자격증
+                </Nav.Link>
+              </Nav>
+            </Container>
+          </Navbar>
+          {!isEducation &&
+          !isAward &&
+          !isProject &&
+          !isCertificate &&
+          isProceeding ? (
+            <>
+              <Proceeding
+                portfolioOwnerId={portfolioOwner.id}
+                isEditable={portfolioOwner.id === userState.user?.id}
+              />
+              <br />
+            </>
+          ) : (
+            <></>
+          )}
+
+          {isEducation ? (
+            <>
+              <Education
+                portfolioOwnerId={portfolioOwner.id}
+                isEditable={portfolioOwner.id === userState.user?.id}
+              />
+              <br />
+            </>
+          ) : (
+            <></>
+          )}
+
+          {isCareer ? (
+            <>
+              <Career
+                portfolioOwnerId={portfolioOwner.id}
+                isEditable={portfolioOwner.id === userState.user?.id}
+              />
+              <br />
+            </>
+          ) : (
+            <></>
+          )}
+
+          {isAward ? (
+            <>
+              <Awards
+                portfolioOwnerId={portfolioOwner.id}
+                isEditable={portfolioOwner.id === userState.user?.id}
+              />
+              <br />
+            </>
+          ) : (
+            <></>
+          )}
+
+          {isProject ? (
+            <>
+              <Project
+                portfolioOwnerId={portfolioOwner.id}
+                isEditable={portfolioOwner.id === userState.user?.id}
+              />
+              <br />
+            </>
+          ) : (
+            <></>
+          )}
+
+          {isCertificate ? (
+            <>
+              <Certificate
+                portfolioOwnerId={portfolioOwner.id}
+                isEditable={portfolioOwner.id === userState.user?.id}
+              />
+              <br />
+            </>
+          ) : (
+            <></>
+          )}
+        </div>
+      </div>
+    </>
   );
 }
 

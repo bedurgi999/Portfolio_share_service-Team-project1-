@@ -3,12 +3,17 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import * as Api from "./api";
 import { loginReducer } from "./reducer";
+import "./App.css";
 
 import Header from "./components/Header";
 import LoginForm from "./components/user/LoginForm";
 import Network from "./components/user/Network";
 import RegisterForm from "./components/user/RegisterForm";
 import Portfolio from "./components/Portfolio";
+import Projects from "./components/search/Projects";
+import ProfilePage from "./components/user/ProfilePage";
+import ControlledCarousel from "./components/carousel/Carousel";
+import PasswordResetForm from "./components/user/PasswordResetForm";
 
 export const UserStateContext = createContext(null);
 export const DispatchContext = createContext(null);
@@ -18,6 +23,7 @@ function App() {
   const [userState, dispatch] = useReducer(loginReducer, {
     user: null,
   });
+  
 
   // 아래의 fetchCurrentUser 함수가 실행된 다음에 컴포넌트가 구현되도록 함.
   // 아래 코드를 보면 isFetchCompleted 가 true여야 컴포넌트가 구현됨.
@@ -36,7 +42,8 @@ function App() {
       });
 
       console.log("%c sessionStorage에 토큰 있음.", "color: #d93d1a;");
-    } catch {
+    } catch (e) {
+      console.log(e);
       console.log("%c SessionStorage에 토큰 없음.", "color: #d93d1a;");
     }
     // fetchCurrentUser 과정이 끝났으므로, isFetchCompleted 상태를 true로 바꿔줌
@@ -49,25 +56,52 @@ function App() {
   }, []);
 
   if (!isFetchCompleted) {
-    return "loading...";
+    return (
+      <div
+        className="loading"
+        style={{
+          fontWeight: "bold",
+          fontSize: 40,
+          textAlign: "center",
+          height: "100vh",
+          lineHeight: "100vh",
+        }}
+      >
+        <span>L</span>
+        <span>O</span>
+        <span>A</span>
+        <span>D</span>
+        <span>I</span>
+        <span>N</span>
+        <span>G</span>
+      </div>
+    );
   }
-
   return (
-    <DispatchContext.Provider value={dispatch}>
-      <UserStateContext.Provider value={userState}>
-        <Router>
-          <Header />
-          <Routes>
-            <Route path="/" exact element={<Portfolio />} />
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/register" element={<RegisterForm />} />
-            <Route path="/users/:userId" element={<Portfolio />} />
-            <Route path="/network" element={<Network />} />
-            <Route path="*" element={<Portfolio />} />
-          </Routes>
-        </Router>
-      </UserStateContext.Provider>
-    </DispatchContext.Provider>
+    <>
+      <DispatchContext.Provider value={dispatch}>
+        <UserStateContext.Provider value={userState}>
+          <Router>
+            <Header />
+            <Routes>
+              <Route path="/home" exact element={<ControlledCarousel />} />
+              <Route path="/" exact element={<Portfolio />} />
+              <Route path="/login" element={<LoginForm />} />
+              <Route path="/register" element={<RegisterForm />} />
+              <Route path="/users/:userId" element={<Portfolio />} />
+              <Route
+                path="/users/:userId/profilePage"
+                element={<ProfilePage />}
+              />
+              <Route path="/network" element={<Network />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route path="/password-reset" element={<PasswordResetForm />}/>
+              <Route path="*" element={<Portfolio />} />
+            </Routes>
+          </Router>
+        </UserStateContext.Provider>
+      </DispatchContext.Provider>
+    </>
   );
 }
 

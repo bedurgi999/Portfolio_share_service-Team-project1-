@@ -5,26 +5,51 @@ import * as Api from '../../api';
 
 import { UserStateContext } from "../../App";
 
+// 프로젝트 추가 Form
 const ProjectForm = ({ setIsEditing, setProjectList, portfolioOwnerId }) => {
-  const [title, setTitle] = useState('');
-  const [prjbody, setPrjBody] = useState('');
 
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [projectInfo, setProjectInfo] = useState({
+    title:'',
+    description:'',
+    from_date:new Date(),
+    to_date:new Date(),
+    link:''
+  })
 
+
+  const handleOnChange = (data, name) => {
+    setProjectInfo(current => ({
+      ...current,
+      [name] : data
+    }))
+  }
 
   const userState = useContext(UserStateContext);
   // 프로젝트 리스트에 프로젝트 추가
   async function handleSubmit(e) {
     e.preventDefault();
-    const data = { user_id: userState.user.id, title, description: prjbody, 
-      from_date: startDate.getFullYear()+'-'+(startDate.getMonth()+1)+'-'+startDate.getDate(), 
-      to_date: endDate.getFullYear()+'-'+(endDate.getMonth()+1)+'-'+endDate.getDate() 
+    if (projectInfo.title === '') {
+      alert('제목을 입력하세요.');
+      return;
     }
-    await Api.post('project/create', data);
-
-    const res = await Api.get('projectlist', portfolioOwnerId);
-    setProjectList(res.data);
+    else if (projectInfo.description === '') {
+      alert('상세내역을 입력하세요');
+      return;
+    }
+    else if (!(projectInfo.from_date < projectInfo.to_date)) {
+      alert('옳지않은 기간입니다. 다시 입력하세요.');
+      return;
+    }
+    const data = { user_id: userState.user.id, title:projectInfo.title, description:projectInfo.description, link:projectInfo.link,
+      from_date: projectInfo.from_date.getFullYear()+'-'+(projectInfo.from_date.getMonth()+1)+'-'+projectInfo.from_date.getDate(), 
+      to_date: projectInfo.to_date.getFullYear()+'-'+(projectInfo.to_date.getMonth()+1)+'-'+projectInfo.to_date.getDate() 
+    }
+    const res = await Api.post('project/create', data);
+    setProjectList(current => {
+      const newProject = [...current];
+      newProject.push(res.data);
+      return newProject;
+    });
     setIsEditing(false);
   }
 
@@ -33,27 +58,35 @@ const ProjectForm = ({ setIsEditing, setProjectList, portfolioOwnerId }) => {
       <Form.Group className="mb-3" controlId="formBasicEmail">
         <Form.Control
           type="text"
-          value={title}
+          value={projectInfo.title}
           placeholder="프로젝트 제목"
           autoComplete="off"
-          onChange={(e) => { setTitle(e.target.value) }}
+          onChange={(e) => (handleOnChange(e.target.value, 'title'))}
         />
       </Form.Group>
       <Form.Group className="mb-3" controlId="formBasicPassword">
         <Form.Control
           type="text"
-          value={prjbody}
+          value={projectInfo.description}
           placeholder="상세내역"
           autoComplete="off"
-          onChange={(e) => { setPrjBody(e.target.value) }} />
+          onChange={(e) => (handleOnChange(e.target.value, 'description'))} />
+      </Form.Group>
+      <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Control
+                    type="text"
+                    value={projectInfo.link}
+                    placeholder="프로젝트 링크"
+                    autoComplete="off"
+                    onChange={(e) => (handleOnChange(e.target.value, 'link'))} />
       </Form.Group>
 
       <Form.Group className="mt-3 row">
         <div className="col-auto">
-          <DatePicker selected={startDate} onChange={date => setStartDate(date)}></DatePicker>
+          <DatePicker selected={projectInfo.from_date} onChange={date => (handleOnChange(date, 'from_date'))}></DatePicker>
         </div>
         <div className="col-auto">
-          <DatePicker selected={endDate} onChange={date => setEndDate(date)}></DatePicker>
+          <DatePicker selected={projectInfo.to_date} onChange={date => (handleOnChange(date, 'to_date'))}></DatePicker>
         </div>
       </Form.Group>
       

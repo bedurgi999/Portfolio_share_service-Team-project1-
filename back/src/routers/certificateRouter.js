@@ -10,6 +10,7 @@ import { certificateAuthService } from "../services/certificateService";
 const certificateAuthRouter = Router();
 certificateAuthRouter.use(login_required);
 
+// POST /certificate/create : certificate 데이터 생성
 certificateAuthRouter.post(
   "/certificate/create",
   isValidData("certificate"),
@@ -45,6 +46,7 @@ certificateAuthRouter.post(
   }
 );
 
+// GET /certificates/:id : certificate 데이터 조회
 certificateAuthRouter.get("/certificates/:id", async (req, res, next) => {
   try {
     const certificate_id = req.params.id;
@@ -63,6 +65,23 @@ certificateAuthRouter.get("/certificates/:id", async (req, res, next) => {
   }
 });
 
+// GET /certificatelist/:user_id : user의 전체 certificate 데이터 조회
+certificateAuthRouter.get(
+  "/certificatelist/:user_id",
+  async (req, res, next) => {
+    try {
+      const { user_id } = req.params;
+      const certificates = await certificateAuthService.getCertificates({
+        user_id,
+      });
+      res.status(200).send(certificates);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// POST /certificates/:id : certificate 데이터 수정
 certificateAuthRouter.put("/certificates/:id", async (req, res, next) => {
   try {
     const certificate_id = req.params.id;
@@ -87,19 +106,37 @@ certificateAuthRouter.put("/certificates/:id", async (req, res, next) => {
   }
 });
 
-certificateAuthRouter.get(
-  "/certificatelist/:user_id",
-  async (req, res, next) => {
-    try {
-      const user_id = req.params.user_id;
-      const certificates = await certificateAuthService.getCertificates({
-        user_id,
-      });
-      res.status(200).send(certificates);
-    } catch (error) {
-      next(error);
+// DELETE /certificates/:id : certificate 데이터 삭제
+certificateAuthRouter.delete("/certificates/:id", async (req, res, next) => {
+  try {
+    const certificate_id = req.params.id;
+    const deletedCertificate = await certificateAuthService.deleteCertificate({
+      certificate_id,
+    });
+
+    if (deletedCertificate.errorMessage) {
+      throw new Error(deletedCertificate.errorMessage);
     }
+
+    res.status(200).send("성공적으로 삭제가 완료되었습니다.");
+
+  } catch (error) {
+    next(error);
   }
-);
+});
+
+// DELETE /certificatelist/:user_id : user의 전체 certificate 데이터 삭제
+certificateAuthRouter.delete("/certificatelist/:user_id", async (req, res, next) => {
+  try {
+    // URI 파라미터에서 user_id 가져오기
+    const { user_id } = req.params;
+    // userId의 certificate 데이터를 모두 삭제함
+    await certificateAuthService.deleteAllCertificate({ user_id });
+
+    res.status(200).json('success');
+  } catch (error) {
+    next(error);
+  }
+});
 
 export { certificateAuthRouter };

@@ -27,16 +27,55 @@ const Awards = ({portfolioOwnerId, isEditable}) => {
 // 버튼을 클릭하면 isAdding이 true로 바뀌며, AwardAddForm 컴포넌트가 생성됨.
 // Award 컴포넌트에 award를 직접 넘겨줌.
   return (
-    <Card>
+    <Card style={{width:"740px"}}>
       <Card.Body>
-        <Card.Title>수상이력</Card.Title>
-        {awards && (awards.map((award) => (
-          <Award key={award.id} portfolioOwnerId={portfolioOwnerId} award={award} isEditable={isEditable} setAwards={setAwards} />)
+        <Card.Title>
+          <span 
+            className="material-icons"
+            style={{verticalAlign:"middle",}}
+          >
+            emoji_events
+          </span>
+           수상이력
+        </Card.Title>
+        {awards && (
+          awards.map((award) => (
+          <Award
+            key={award.id}
+            awards={awards}
+            portfolioOwnerId={portfolioOwnerId}
+            award={award}
+            isEditable={isEditable}
+            setAwards={setAwards}
+            />
+          )
         ))}
-        <div style={{ textAlign: "center" }}>
-          {!isAdding && isEditable && <Button size='sm' variant="primary" onClick={() => setIsAdding(true)}>+</Button>}
+        <div style={{ textAlign: "center", padding:"16px" }}>
+          {!isAdding &&
+          isEditable &&
+            <Button
+              style={{borderRadius:100,}}
+              size='sm'
+              variant="primary"
+              onClick={() => setIsAdding(true)}
+            >
+              <span
+                className="material-icons"
+                style={{verticalAlign:'middle',fontSize:15,}}
+              >
+                add
+              </span>
+            </Button>
+          }
         </div>
-        {isAdding && <AwardAddForm awards={awards} portfolioOwnerId={portfolioOwnerId} setAwards={setAwards} setIsAdding={setIsAdding} />}
+        {isAdding &&
+          <AwardAddForm
+            awards={awards}
+            portfolioOwnerId={portfolioOwnerId}
+            setAwards={setAwards}
+            setIsAdding={setIsAdding}
+          />
+        }
       </Card.Body>
     </Card>
   );
